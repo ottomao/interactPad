@@ -44,8 +44,9 @@ KISSY.add(function (S, Node,Dom,Base) {
                              _self.render();
                         }
                     });
-
-                    newSrc    = _self.fatherPad.get("proxyPrefix") + ( /http:\/\//.test(v) ? v : "http://" + v ) + "?_random=" + new Date().getTime(); //fix onload in IE
+                    newSrc    = _self.fatherPad.get("proxyPrefix") ?
+                                _self.fatherPad.get("proxyPrefix") + ( /http:\/\//.test(v) ? v : "http://" + v ) + "?_random=" + new Date().getTime():
+                                v;
                     imgEl.src = newSrc;
                     return newSrc;
                 },
