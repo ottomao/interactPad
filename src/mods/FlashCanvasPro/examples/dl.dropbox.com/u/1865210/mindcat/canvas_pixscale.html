@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Canvas Pixel Quality Test</title>
+    <style>
+      button { width: 160px; height: 26px; }
+      canvas { background: url(images/grid.png); }
+    </style>
+    <!--[if lt IE 9]><script type="text/javascript" src="../../../../../bin/flashcanvas.js"></script><![endif]-->
+    <script>
+      if (window.CanvasRenderingContext2D && !CanvasRenderingContext2D.prototype.createImageData && window.ImageData) {
+        CanvasRenderingContext2D.prototype.createImageData = function(w, h) {
+          return new ImageData(w, h)
+        };
+      }
+    </script>
+    <script src="canvas_pixscale.js"></script>
+  </head>
+  
+  <body onload="pix=canvas_pixscale(); pix.line()">
+    <h2>Canvas Pixel Quality Test</h2>
+    <canvas id="canvas" width="50px" height="50px"
+      style0="position:relative;top:-450px;">
+      Your Browser does not support Canvas tag.
+    </canvas><br/><br/>
+
+    <canvas id="canvas2" width="500px" height="500px" align0="left">
+      Your Browser does not support Canvas tag.
+    </canvas>
+
+    <div style="position:relative;left:510px;top:-500px;">
+      <button onclick="pix.clear()" >Clear</button><br/>
+      <button onclick="pix.line(1.0)" >Line width=1.0</button><br/>
+      <button onclick="pix.line(0.5)" >Line width=0.5</button><br/>
+      <button onclick="pix.line(0.1)" >Line width=0.1</button><br/>
+      <button onclick="pix.line2(0.5)" >Line2 width=0.5</button><br/>
+      <button onclick="pix.fill(2.0)" >Fill Line width=2.0</button><br/>
+      <button onclick="pix.fill(1.0)" >Fill Line width=1.0</button><br/>
+      <button onclick="pix.fill(1/2)" >Fill Line width=1/2</button><br/>
+      <button onclick="pix.fill(1/8)" >Fill Line width=1/8</button><br/>
+      <button onclick="pix.fill(1/32)" >Fill Line width=1/32</button><br/>
+      <button onclick="pix.fill(1/64)" >Fill Line width=1/64</button><br/>
+      <button onclick="pix.fill(1/128)" >Fill Line width=1/128</button><br/>
+      <button onclick="pix.fill(1/129)" >Fill Line width=1/129</button><br/>
+      <button onclick="pix.fill(1/200)" >Fill Line width=1/200</button><br/>
+      <button onclick="pix.fill(1/255)" >Fill Line width=1/255</button><br/>
+      <button onclick="pix.fill(1/256)" >Fill Line width=1/256</button><br/>
+      <button onclick="pix.fill_rect()">Fill Rect</button><br/>
+      <button onclick="pix.clip()">Clip</button><br/>
+      <button onclick="pix.text()">Text</button><br/>
+    </div>
+
+  </body>
+</html>

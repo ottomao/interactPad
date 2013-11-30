@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<meta http-equiv="Content-Script-Type" content="text/javascript">
+<title>Canvas drawImage Benchmark 2010</title> 
+<!--[if lt IE 9]><script type="text/javascript" src="../../../../bin/flashcanvas.js"></script><![endif]--> 
+<script type="text/javascript"> 
+/*
+ * Copyright (c) 2010, Yu Kobayashi
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ *
+ *  * Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ *  * Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in
+ *    the documentation and/or other materials provided with the
+ *    distribution.
+ *  * Neither the name of the author nor the names of its contributors
+ *    may be used to endorse or promote products derived from this
+ *    software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+ * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ * HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ * Modifications added by Shinya Muramatsu:
+ *  * Changed DOCTYPE to support IE9.
+ *  * Set the image.onload before setting the image.src.
+ *  * Made it possible to use arbitrary image files.
+ */
+window.onload = function() {
+	var files = [
+		"png/black.png",
+		"png/blue.png",
+		"png/green.png",
+		"png/orange.png",
+		"png/purple.png",
+		"png/red.png"
+	];
+	
+	var imgs = [];
+	function loadImg() {
+		var loadedCounter = 0;
+		for (var i = 0; i < files.length; i++) {
+			imgs[i] = new Image();
+			imgs[i].onload = function() {
+				loadedCounter++;
+				if (loadedCounter === files.length) {
+					doBench();
+				}
+			};
+			imgs[i].src = files[i];
+		}
+	}
+	
+	var ctx;
+	function main() {
+		var canvas = document.getElementById("cvs");
+		ctx = canvas.getContext("2d");
+		loadImg();
+	}
+	
+	function doBench() {
+		var start = new Date();
+		var k = 0;
+		doBenchInner();
+		function doBenchInner() {
+			if (k >= 10) {
+				var end = new Date();
+				alert((end - start - 1000) + " ms");
+				return;
+			}
+			
+			for (var j = 0; j < 300; j++) {
+				for (var i = 0; i < imgs.length; i++) {
+					var x = Math.random() * 750 | 0;
+					var y = Math.random() * 550 | 0;
+			  		ctx.drawImage(imgs[i], x, y);
+			  	}
+		  	}
+		  	k++;
+		  	//setTimeout(doBenchInner, k <= 2 ? 100 : 0);
+		  	setTimeout(doBenchInner, 100);
+		}
+	}
+	
+	main();
+};
+</script>
+</head>
+<body>
+<canvas id="cvs" width="800" height="600" class="flash"></canvas><br><br>
+<a href="http://d.hatena.ne.jp/yukoba/20100310/p1">Blog</a><br>
+</body>
+</html>

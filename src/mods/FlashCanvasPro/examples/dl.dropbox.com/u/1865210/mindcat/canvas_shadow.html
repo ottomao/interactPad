@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>HTML5 Canvas Shadow Test</title>
+    <style>
+      .btn { width: 100px; height: 30px }
+    </style>
+    <!--[if lt IE 9]><script type="text/javascript" src="../../../../../bin/flashcanvas.js"></script><![endif]-->
+    <script src="canvas_shadow.js"></script>
+  </head>
+  
+  <body onload="sdw=canvas_shadow_test();">
+    <h2>Shadow Test</h2>
+    <canvas id="canvas" width="300px" height="300px" align="top">
+      Your Browser does not support Canvas tag.
+    </canvas>
+
+    <div style="position:relative;left:310px;top:-300px">
+      <button class="btn" onclick="sdw.test_norm()">Fill Rect</button><br/>
+      <button class="btn" onclick="sdw.test_grad()">Gradient</button><br/>
+      <button class="btn" onclick="sdw.test_text()">Fill Text</button><br/>
+      <button class="btn" onclick="sdw.test_image()">Image</button><br/>
+    </div>
+
+  </body>
+</html>

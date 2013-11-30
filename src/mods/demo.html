@@ -1,0 +1,168 @@
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <script src="http://g.tbcdn.cn/kissy/k/1.3.2/seed-min.js"></script>
+
+    <div class="container">
+        <div class="left">
+
+            <!--留出一个容器，供组件使用 -->
+            <div class="canvasWrapper"> </div>
+        </div>
+
+        <div class="right">
+            <h4>图层管理</h4>
+            <table>
+                <tr>
+                    <td class="thumbImg"><img src="./frame.png" /></td>
+                    <td class="action act-active"><a class="frameAct" href="#">激活</a></td>
+                    <td class="action act-cancel"><a class="frameCancel" href="#">取消</a></td>
+                </tr>
+
+                <tr>
+                    <td class="thumbImg"><img src="./dog.jpg" /></td>
+                    <td class="action act-active"><a class="item1Act" href="#">激活</a></td>
+                    <td class="action act-cancel"><a class="item1Cancel" href="#">取消</a></td>
+                </tr>
+
+                <tr>
+                    <td class="thumbImg"><img src="./item2.png" /></td>
+                    <td class="action act-active"><a class="item2Act" href="#">激活</a></td>
+                    <td class="action act-cancel"><a class="item2Cancel" href="#">取消</a></td>
+                </tr>
+
+                <tr>
+                    <td class="thumbImg"></td>
+                    <td class="action act-active"><a class="all_cancel" href="#">退出交互</a></td>
+                    <td class="action act-cancel"><a class="getData" href="#">获取数据</a></td>
+                </tr>
+            </table>
+        </div>
+        <div style="clear:both"> </div>
+    </div>
+
+    <hr>
+    <h3>素材</h3>
+    <div class="srcWrapper">
+        <!-- 图片素材 请替换为自己域下的图片,否则无法输出结果 -->
+
+<!--         <img id="frame"  src="http://gtms01.alicdn.com/tps/i1/T14GxoXy8jXXaMrwve-700-430.png" />
+        <img id="item1"  src="http://gtms01.alicdn.com/tps/i1/T1oVxmXqVhXXb4HOvo-600-375.jpg" />
+        <img id="item2"  src="http://gtms01.alicdn.com/tps/i1/T1WuhmXD8hXXaeHbsb-100-100.png" />
+
+ -->
+    </div>
+
+    <script type="text/javascript">
+
+        /*调试模式，组件使用者无需使用*/
+        var S = KISSY;
+        S.Config.debug = true;
+        if (S.Config.debug) {
+            S.config({
+                packages:[
+                    {
+                        name:"gallery/drawingPad/1.0",
+                        path:"./",
+                        charset:"utf-8",
+                        ignorePackageNameInUri:true
+                    }
+                ]
+            });
+        }
+
+
+        /*使用组件*/
+        KISSY.use("gallery/drawingPad/1.0/index,node",function(S,DrawingPad,Node,F){
+        // KISSY.use("gallery/drawingPad/1.0/index,node",function(S,DrawingPad,Node){
+            S.ready(function(){
+
+                //准备素材，目前只能使用同域素材，否则无法输出结果
+                // var frameEl = "http://localhost/mods/frame.png"; // document.getElementById("frame").src;
+                // var itemEl1 = "http://localhost/mods/dog.jpg";   // document.getElementById("item1").src;
+                // var itemEl2 = "http://localhost/mods/item2.png"; // document.getElementById("item2").src;
+
+                var frameEl = "http://gtms01.alicdn.com/tps/i1/T14GxoXy8jXXaMrwve-700-430.png";
+                var itemEl1 = "http://gtms01.alicdn.com/tps/i1/T1oVxmXqVhXXb4HOvo-600-375.jpg";
+                var itemEl2 = "http://gtms01.alicdn.com/tps/i1/T1WuhmXD8hXXaeHbsb-100-100.png";
+
+                //初始化绘图板
+                //若不使用proxy，直接置proxyPrefix:""
+                var drawingPad = new DrawingPad({
+                    height      : 430,
+                    width       : 700,
+                    wrapper     : S.get(".canvasWrapper") //,
+                    // proxyPrefix : ""
+                });
+
+                //添加图层，添加顺序即是覆盖顺序
+                var itemLayer = drawingPad.addLayer({
+                    img      : itemEl1, //图层的图形素材，必须指定 
+                    centerX  : 200,     //图片的中心x，可选，默认0
+                    centerY  : 200,     //图片的中心y，可选，默认0
+                    rotate   : 10,      //旋转角度,可选，默认0
+                    scale    : 1,       //缩放比例，可选，默认0
+                    cusClass : "myClass" //自定义样式
+                }); //.render();
+
+                //添加图层，添加顺序即是覆盖顺序
+                var frameLayer = drawingPad.addLayer({
+                    img   : frameEl
+                }); //.render();
+
+                //添加图层，添加顺序即是覆盖顺序
+                var itemLayer2 = drawingPad.addLayer({
+                    img : itemEl2
+                }); //.render();
+
+                Node.one(".item1Act").on("click",function(){
+                    drawingPad.activeInteract(itemLayer);
+                });
+
+                Node.one(".item1Cancel").on("click",function(){
+                    itemLayer.deactiveInteract(); 
+                });
+
+                Node.one(".item2Act").on("click",function(){
+                    drawingPad.activeInteract(itemLayer2);
+                });
+
+                Node.one(".item2Cancel").on("click",function(){
+                    drawingPad.deactiveInteract();
+                });
+
+                Node.one(".frameAct").on("click",function(){
+                    drawingPad.activeInteract(frameLayer);
+                });
+
+                Node.one(".frameCancel").on("click",function(){
+                    drawingPad.deactiveInteract();
+                });
+
+                Node.one(".all_cancel").on("click",function(){
+                    drawingPad.deactiveInteract();  //退出所有图层的交互模式
+                });
+
+
+                //获取合并后的数据，并在新窗口中打开预览
+                Node.one(".getData").on("click",function(){
+                    var data = drawingPad.getMergedData(function(a){
+                        // alert(a);
+                        console.log(a);
+                    },8000);
+                    // alert(data);
+                    // window.open(data,"_blank");
+                });
+
+                // forDebug
+                window.drawingPad = drawingPad;
+                window.itemLayer  = itemLayer;
+                window.frameLayer = frameLayer;
+            });
+
+        });
+
+    </script>
+
+    <style>
+    /*全是demo中的style，可以删除*/
+    <!--#include "/mods/demo.css"-->
+    </style>

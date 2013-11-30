@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html>
+  <!--  -->
+  <head>
+    <meta http-equiv="Cache-Control" content="no-cache;no-store"></meta>
+    <meta http-equiv="Pragma" content="no-cache">
+    <title>Canvas globalCompositeOperation Test</title>
+    <!--[if lt IE 9]><script type="text/javascript" src="../../../../../bin/flashcanvas.js"></script><![endif]-->
+    <script class="javascript" src="canvas_compositing.js"></script>
+  </head>
+
+  <body onload="canvas_composite_test()">
+    <h1>Canvas globalCompositeOperation Test</h1>
+    <button onclick="clear_all()">Clear</button>
+    <button onclick="canvas_composite_test()">Draw</button>
+    
+    <div style="position:relative;width:800px;height:600px">
+      <div style="background:url(images/grid.png);
+                  width:800px;height:600px">
+      </div>
+      <canvas id="cvs00" width="100px" height="100px"
+              style="position:absolute;top:0px; left:0px;
+               width:100px;height:100px; background:rgba(0,0,0,0)">
+       </canvas>
+      <canvas id="cvs01" width="100px" height="100px"
+              style="position:absolute;top:0px; left:100px;
+               width:100px;height:100px; background:rgba(0,0,0,0)">
+       </canvas>
+      <canvas id="cvs02" width="100px" height="100px"
+              style="position:absolute;top:0px; left:200px;
+               width:100px;height:100px; background:rgba(0,0,0,0)">
+       </canvas>
+      <canvas id="cvs03" width="100px" height="100px"
+              style="position:absolute;top:0px; left:300px;
+               width:100px;height:100px; background:rgba(0,0,0,0)">
+       </canvas>
+      <canvas id="cvs04" width="100px" height="100px"
+              style="position:absolute;top:0px; left:400px;
+               width:100px;height:100px; background:rgba(0,0,0,0)">
+       </canvas>
+      <canvas id="cvs05" width="100px" height="100px"
+              style="position:absolute;top:0px; left:500px;
+               width:100px;height:100px; background:rgba(0,0,0,0)">
+       </canvas>
+      <canvas id="cvs06" width="100px" height="100px"
+              style="position:absolute;top:0px; left:600px;
+               width:100px;height:100px; background:rgba(0,0,0,0)">
+       </canvas>
+      <canvas id="cvs07" width="100px" height="100px"
+              style="position:absolute;top:0px; left:700px;
+               width:100px;height:100px; background:rgba(0,0,0,0)">
+       </canvas>
+      <canvas id="cvs10" width="100px" height="100px"
+              style="position:absolute;top:100px; left:0px;
+               width:100px;height:100px; background:rgba(0,0,0,0)">
+       </canvas>
+      <canvas id="cvs11" width="100px" height="100px"
+              style="position:absolute;top:100px; left:100px;
+               width:100px;height:100px; background:rgba(0,0,0,0)">
+       </canvas>
+      <canvas id="cvs12" width="100px" height="100px"
+              style="position:absolute;top:100px; left:200px;
+               width:100px;height:100px; background:rgba(0,0,0,0)">
+       </canvas>
+      <canvas id="cvs13" width="100px" height="100px"
+              style="position:absolute;top:100px; left:300px;
+               width:100px;height:100px; background:rgba(0,0,0,0)">
+       </canvas>
+      <canvas id="cvs14" width="100px" height="100px"
+              style="position:absolute;top:100px; left:400px;
+               width:100px;height:100px; background:rgba(0,0,0,0)">
+       </canvas>
+      <canvas id="cvs15" width="100px" height="100px"
+              style="position:absolute;top:100px; left:500px;
+               width:100px;height:100px; background:rgba(0,0,0,0)">
+       </canvas>
+      <canvas id="cvs16" width="100px" height="100px"
+              style="position:absolute;top:100px; left:600px;
+               width:100px;height:100px; background:rgba(0,0,0,0)">
+       </canvas>
+      <canvas id="cvs17" width="100px" height="100px"
+              style="position:absolute;top:100px; left:700px;
+               width:100px;height:100px; background:rgba(0,0,0,0)">
+       </canvas>
+      <canvas id="cvs20" width="100px" height="100px"
+              style="position:absolute;top:200px; left:0px;
+               width:100px;height:100px; background:rgba(0,0,0,0)">
+       </canvas>
+      <canvas id="cvs21" width="100px" height="100px"
+              style="position:absolute;top:200px; left:100px;
+               width:100px;height:100px; background:rgba(0,0,0,0)">
+       </canvas>
+      <canvas id="cvs22" width="100px" height="100px"
+              style="position:absolute;top:200px; left:200px;
+               width:100px;height:100px; background:rgba(0,0,0,0)">
+       </canvas>
+      <canvas id="cvs23" width="100px" height="100px"
+              style="position:absolute;top:200px; left:300px;
+               width:100px;height:100px; background:rgba(0,0,0,0)">
+       </canvas>
+      <canvas id="cvs24" width="100px" height="100px"
+              style="position:absolute;top:200px; left:400px;
+               width:100px;height:100px; background:rgba(0,0,0,0)">
+       </canvas>
+      <canvas id="cvs25" width="100px" height="100px"
+              style="position:absolute;top:200px; left:500px;
+               width:100px;height:100px; background:rgba(0,0,0,0)">
+       </canvas>
+      <canvas id="cvs26" width="100px" height="100px"
+              style="position:absolute;top:200px; left:600px;
+               width:100px;height:100px; background:rgba(0,0,0,0)">
+       </canvas>
+      <canvas id="cvs27" width="100px" height="100px"
+              style="position:absolute;top:200px; left:700px;
+               width:100px;height:100px; background:rgba(0,0,0,0)">
+       </canvas>
+      <canvas id="cvs30" width="100px" height="100px"
+              style="position:absolute;top:300px; left:0px;
+               width:100px;height:100px; background:rgba(0,0,0,0)">
+       </canvas>
+      <canvas id="cvs31" width="100px" height="100px"
+              style="position:absolute;top:300px; left:100px;
+               width:100px;height:100px; background:rgba(0,0,0,0)">
+       </canvas>
+      <canvas id="cvs32" width="100px" height="100px"
+              style="position:absolute;top:300px; left:200px;
+               width:100px;height:100px; background:rgba(0,0,0,0)">
+       </canvas>
+      <canvas id="cvs33" width="100px" height="100px"
+              style="position:absolute;top:300px; left:300px;
+               width:100px;height:100px; background:rgba(0,0,0,0)">
+       </canvas>
+      <canvas id="cvs34" width="100px" height="100px"
+              style="position:absolute;top:300px; left:400px;
+               width:100px;height:100px; background:rgba(0,0,0,0)">
+       </canvas>
+      <canvas id="cvs35" width="100px" height="100px"
+              style="position:absolute;top:300px; left:500px;
+               width:100px;height:100px; background:rgba(0,0,0,0)">
+       </canvas>
+      <canvas id="cvs36" width="100px" height="100px"
+              style="position:absolute;top:300px; left:600px;
+               width:100px;height:100px; background:rgba(0,0,0,0)">
+       </canvas>
+      <canvas id="cvs37" width="100px" height="100px"
+              style="position:absolute;top:300px; left:700px;
+               width:100px;height:100px; background:rgba(0,0,0,0)">
+       </canvas>
+      <canvas id="cvs40" width="100px" height="100px"
+              style="position:absolute;top:400px; left:0px;
+               width:100px;height:100px; background:rgba(0,0,0,0)">
+       </canvas>
+      <canvas id="cvs41" width="100px" height="100px"
+              style="position:absolute;top:400px; left:100px;
+               width:100px;height:100px; background:rgba(0,0,0,0)">
+       </canvas>
+      <canvas id="cvs42" width="100px" height="100px"
+              style="position:absolute;top:400px; left:200px;
+               width:100px;height:100px; background:rgba(0,0,0,0)">
+       </canvas>
+      <canvas id="cvs43" width="100px" height="100px"
+              style="position:absolute;top:400px; left:300px;
+               width:100px;height:100px; background:rgba(0,0,0,0)">
+       </canvas>
+      <canvas id="cvs44" width="100px" height="100px"
+              style="position:absolute;top:400px; left:400px;
+               width:100px;height:100px; background:rgba(0,0,0,0)">
+       </canvas>
+      <canvas id="cvs45" width="100px" height="100px"
+              style="position:absolute;top:400px; left:500px;
+               width:100px;height:100px; background:rgba(0,0,0,0)">
+       </canvas>
+      <canvas id="cvs46" width="100px" height="100px"
+              style="position:absolute;top:400px; left:600px;
+               width:100px;height:100px; background:rgba(0,0,0,0)">
+       </canvas>
+      <canvas id="cvs47" width="100px" height="100px"
+              style="position:absolute;top:400px; left:700px;
+               width:100px;height:100px; background:rgba(0,0,0,0)">
+       </canvas>
+      <canvas id="cvs50" width="100px" height="100px"
+              style="position:absolute;top:500px; left:0px;
+               width:100px;height:100px; background:rgba(0,0,0,0)">
+       </canvas>
+      <canvas id="cvs51" width="100px" height="100px"
+              style="position:absolute;top:500px; left:100px;
+               width:100px;height:100px; background:rgba(0,0,0,0)">
+       </canvas>
+      <canvas id="cvs52" width="100px" height="100px"
+              style="position:absolute;top:500px; left:200px;
+               width:100px;height:100px; background:rgba(0,0,0,0)">
+       </canvas>
+      <canvas id="cvs53" width="100px" height="100px"
+              style="position:absolute;top:500px; left:300px;
+               width:100px;height:100px; background:rgba(0,0,0,0)">
+       </canvas>
+      <canvas id="cvs54" width="100px" height="100px"
+              style="position:absolute;top:500px; left:400px;
+               width:100px;height:100px; background:rgba(0,0,0,0)">
+       </canvas>
+      <canvas id="cvs55" width="100px" height="100px"
+              style="position:absolute;top:500px; left:500px;
+               width:100px;height:100px; background:rgba(0,0,0,0)">
+       </canvas>
+      <canvas id="cvs56" width="100px" height="100px"
+              style="position:absolute;top:500px; left:600px;
+               width:100px;height:100px; background:rgba(0,0,0,0)">
+       </canvas>
+      <canvas id="cvs57" width="100px" height="100px"
+              style="position:absolute;top:500px; left:700px;
+               width:100px;height:100px; background:rgba(0,0,0,0)">
+       </canvas>
+      
+    </div>
+
+  </body>
+</html>
