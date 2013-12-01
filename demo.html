@@ -19,26 +19,24 @@
             <table>
                 <tr>
                     <td class="thumbImg"><img src="./resource/frame.png" /></td>
-                    <td class="action act-active"><a class="frameAct" href="#">激活</a></td>
-                    <td class="action act-cancel"><a class="frameCancel" href="#">取消</a></td>
+                    <td class="action act-active"><a class="frameAct" href="#">激活交互</a></td>
+                    <td class="action all_cancel" rowspan="3">退出交互</td>
                 </tr>
 
                 <tr>
                     <td class="thumbImg"><img src="./resource/dog.jpg" /></td>
-                    <td class="action act-active"><a class="item1Act" href="#">激活</a></td>
-                    <td class="action act-cancel"><a class="item1Cancel" href="#">取消</a></td>
+                    <td class="action act-active"><a class="item1Act" href="#">激活交互</a></td>
                 </tr>
 
                 <tr>
                     <td class="thumbImg"><img src="./resource/item2.png" /></td>
-                    <td class="action act-active"><a class="item2Act" href="#">激活</a></td>
-                    <td class="action act-cancel"><a class="item2Cancel" href="#">取消</a></td>
+                    <td class="action act-active"><a class="item2Act" href="#">激活交互</a></td>
                 </tr>
 
                 <tr>
-                    <td class="thumbImg"></td>
-                    <td class="action act-active"><a class="all_cancel" href="#">退出交互</a></td>
-                    <td class="action act-cancel"><a class="getData" href="#">获取数据</a></td>
+                    <td class="action act-cancel"><a class="getData" href="#">获取图像</a></td>
+                    <td class="action act-active"><a class="getSingleInter" href="#">获取单层交互数据</a></td>
+                    <td class="action act-cancel"><a class="getAllInter" href="#">获取全部交互数据</a></td>
                 </tr>
             </table>
         </div>
@@ -110,30 +108,28 @@
                     drawingPad.activeInteract(itemLayer);
                 });
 
-                Node.one(".item1Cancel").on("click",function(){
-                    itemLayer.deactiveInteract(); 
-                });
-
                 Node.one(".item2Act").on("click",function(){
                     drawingPad.activeInteract(itemLayer2);
-                });
-
-                Node.one(".item2Cancel").on("click",function(){
-                    drawingPad.deactiveInteract();
                 });
 
                 Node.one(".frameAct").on("click",function(){
                     drawingPad.activeInteract(frameLayer);
                 });
 
-                Node.one(".frameCancel").on("click",function(){
-                    drawingPad.deactiveInteract();
-                });
-
                 Node.one(".all_cancel").on("click",function(){
                     drawingPad.deactiveInteract();  //退出所有图层的交互模式
                 });
 
+                //获取交互数据
+                Node.one(".getSingleInter").on("click",function(){
+                    var data = drawingPad.getLayerInfo(itemLayer);
+                    console.log(data);
+                });
+
+                Node.one(".getAllInter").on("click",function(){
+                    var data = drawingPad.getLayerInfo();
+                    console.log(data);
+                });
 
                 //获取合并后的数据，并在新窗口中打开预览
                 Node.one(".getData").on("click",function(){
@@ -145,7 +141,6 @@
                         }
                     },8000);
                     // alert(data);
-                    // window.open(data,"_blank");
                 });
 
                 // forDebug

@@ -5,6 +5,7 @@
  **/
 
 //TODO : flashCanvas下的鼠标手势
+//TODO : 扔了cordX这个属性
 KISSY.add(function (S, Node,Dom,Base) {
     var CLASS_INTERACT  = "_drawingPad_interact";
     var DEFAULT_PROXY   = "http://www.tmall.com/go/rgn/tbs-proxy.php?file=";
@@ -505,7 +506,7 @@ KISSY.add(function (S, Node,Dom,Base) {
             activeInteract:function(layerIndex){
                 this.layers[layerIndex].activeInteract();
             },
-            deactiveInteract:function(layerIndex){
+            deactiveInteract:function(){
                 var doingLayer = this.interactDoingLayer;
                 if(!doingLayer) return;
                 doingLayer.deactiveInteract();
@@ -626,6 +627,34 @@ KISSY.add(function (S, Node,Dom,Base) {
                     return "";
                 }
                 
+            },
+            getLayerInfo:function(layerIndex){
+                var self        = this,
+                    layers      = self.layers,
+                    ret         = [];
+
+                if(layerIndex){
+                    return getSingleLayerData(layerIndex);
+                }else{
+                    var ret = [],
+                        i;
+                    for (i = 1 ; i < layers.length ; i ++){ //escape capture layer
+                        ret[i] = getSingleLayerData(i);
+                    }
+                    return ret;
+                }
+
+                function getSingleLayerData(layerIndex){
+                    var layer = layers[layerIndex];
+                    return {
+                        centerX : layer.cordX,
+                        centerY : layer.cordY,
+                        rotate  : layer.get("rotate"),
+                        scale   : layer.get("scale")
+                    }
+                }
+
+                return ret;
             }
         },{}
     );
