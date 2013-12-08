@@ -34,6 +34,11 @@
                 </tr>
 
                 <tr>
+                    <td class="action"><a class="set_rotate" href="#">设置旋转角度</a></td>
+                    <td class="action"><a class="set_scale" href="#">设置缩放比例</a></td>
+                </tr>
+
+                <tr>
                     <td class="action act-cancel"><a class="getData" href="#">获取图像</a></td>
                     <td class="action act-active"><a class="getSingleInter" href="#">获取单层交互数据</a></td>
                     <td class="action act-cancel"><a class="getAllInter" href="#">获取全部交互数据</a></td>
@@ -41,6 +46,8 @@
             </table>
         </div>
         <div style="clear:both"> </div>
+
+        <input type="file" id="J_selectFile" />
     </div>
 
     <script type="text/javascript">
@@ -61,6 +68,7 @@
             });
         }
 
+
         /*使用组件*/
         KISSY.use("gallery/drawingPad/1.0/index,node",function(S,DrawingPad,Node,F){
         // KISSY.use("gallery/drawingPad/1.0/index,node",function(S,DrawingPad,Node){
@@ -71,7 +79,9 @@
                 var itemEl1 = "./resource/dog.jpg";   
                 var itemEl2 = "./resource/item2.png"; 
 
-                // var frameEl = "http://gtms01.alicdn.com/tps/i1/T14GxoXy8jXXaMrwve-700-430.png";
+
+                //http://lobbydata.com/Content/images/bg_price2.gif
+                // var frameEl =  "http://gtms01.alicdn.com/tps/i1/T14GxoXy8jXXaMrwve-700-430.png";
                 // var itemEl1 = "http://gtms01.alicdn.com/tps/i1/T1oVxmXqVhXXb4HOvo-600-375.jpg";
                 // var itemEl2 = "http://gtms01.alicdn.com/tps/i1/T1WuhmXD8hXXaeHbsb-100-100.png";
 
@@ -81,7 +91,7 @@
                     height      : 430,
                     width       : 700,
                     wrapper     : S.get(".canvasWrapper"),
-                    proxyPrefix : "" 
+                    proxyPrefix : "" //"http://pepsi.tmall.com/usrimg?src=" 
                 });
 
                 //添加图层，添加顺序即是覆盖顺序
@@ -118,6 +128,14 @@
 
                 Node.one(".all_cancel").on("click",function(){
                     drawingPad.deactiveInteract();  //退出所有图层的交互模式
+                });
+
+                Node.one(".set_rotate").on("click",function(){
+                    drawingPad.setLayerPara(itemLayer2,"rotate",180); //[-180,180]
+                });
+
+                Node.one(".set_scale").on("click",function(){
+                    drawingPad.setLayerPara(itemLayer2,"scale",7); //大于0
                 });
 
                 //获取交互数据
