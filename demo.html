@@ -19,18 +19,18 @@
             <table>
                 <tr>
                     <td class="thumbImg"><img src="./resource/frame.png" /></td>
-                    <td class="action act-active"><a class="frameAct" href="#">激活交互</a></td>
+                    <td class="action act-active"><a class="frameAct" href="#">激活鼠标拖动交互</a></td>
                     <td class="action all_cancel" rowspan="3"><a class="all_cancel" href="#">退出交互</a></td>
                 </tr>
 
                 <tr>
                     <td class="thumbImg"><img src="./resource/dog.jpg" /></td>
-                    <td class="action act-active"><a class="item1Act" href="#">激活交互</a></td>
+                    <td class="action act-active"><a class="item1Act" href="#">激活鼠标拖动交互</a></td>
                 </tr>
 
                 <tr>
                     <td class="thumbImg"><img src="./resource/item2.png" /></td>
-                    <td class="action act-active"><a class="item2Act" href="#">激活交互</a></td>
+                    <td class="action act-active"><a class="item2Act" href="#">激活鼠标拖动交互</a></td>
                 </tr>
 
                 <tr>
@@ -75,24 +75,29 @@
         // KISSY.use("gallery/drawingPad/1.0/index,node",function(S,DrawingPad,Node){
             S.ready(function(){
 
-                //准备素材，目前只能使用同域素材，否则无法输出结果
-                var frameEl = "./resource/frame.png"; 
-                var itemEl1 = "./resource/dog.jpg";   
-                var itemEl2 = "./resource/item2.png"; 
+                //准备素材，受canvas安全限制，输出合成图片时只能使用同域素材，否则无法输出
+                //可以考虑使用代理方案
 
-
-                //http://lobbydata.com/Content/images/bg_price2.gif
-                // var frameEl =  "http://gtms01.alicdn.com/tps/i1/T14GxoXy8jXXaMrwve-700-430.png";
-                // var itemEl1 = "http://gtms01.alicdn.com/tps/i1/T1oVxmXqVhXXb4HOvo-600-375.jpg";
-                // var itemEl2 = "http://gtms01.alicdn.com/tps/i1/T1WuhmXD8hXXaeHbsb-100-100.png";
-
+                if( S.UA.ie <= 8){
+                    //暂时性解决跨域问题，后续将通过flash跨域配置来解决
+                    var frameEl =  "http://gtms01.alicdn.com/tps/i1/T14GxoXy8jXXaMrwve-700-430.png";
+                    var itemEl1 = "http://gtms01.alicdn.com/tps/i1/T1oVxmXqVhXXb4HOvo-600-375.jpg";
+                    var itemEl2 = "http://gtms01.alicdn.com/tps/i1/T1WuhmXD8hXXaeHbsb-100-100.png";
+                    var proxyServer = "http://www.tmall.com/go/rgn/tbs-proxy.php?file=";  
+                }else{
+                    var frameEl = "./resource/frame.png"; 
+                    var itemEl1 = "./resource/dog.jpg";   
+                    var itemEl2 = "./resource/item2.png"; 
+                    var proxyServer = "";                  
+                }
+                
                 //初始化绘图板
                 //若不使用proxy，直接置proxyPrefix:""
                 var drawingPad = new DrawingPad({
                     height      : 430,
                     width       : 700,
                     wrapper     : S.get(".canvasWrapper"),
-                    proxyPrefix : "" //"http://pepsi.tmall.com/usrimg?src=" 
+                    proxyPrefix : proxyServer // 百事项目："http://pepsi.tmall.com/usrimg?src=" 
                 });
 
                 //添加图层，添加顺序即是覆盖顺序
@@ -155,9 +160,10 @@
                 });
 
                 //获取合并后的数据，并在新窗口中打开预览
+                //这个功能会涉及代理功能的使用，请务必联系ＰＥ确认！
                 Node.one(".getData").on("click",function(){
                     var data = drawingPad.getMergedData(function(data){
-                        console.log(data);
+                        S.log(data);
 
                         if(S.UA.chrome){
                             window.open(data,"_blank");
