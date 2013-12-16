@@ -34,6 +34,11 @@
                 </tr>
 
                 <tr>
+                    <td class="action"><a class="set_hide" href="#">隐藏相框</a></td>
+                    <td class="action"><a class="set_show" href="#">显示相框</a></td>
+                </tr>
+
+                <tr>
                     <td class="action"><a class="set_rotate" href="#">设置旋转角度</a></td>
                     <td class="action"><a class="set_scale" href="#">设置缩放比例</a></td>
                     <td class="action"><a class="set_image" href="#">设置图片</a></td>
@@ -76,28 +81,19 @@
             S.ready(function(){
 
                 //准备素材，受canvas安全限制，输出合成图片时只能使用同域素材，否则无法输出
-                //可以考虑使用代理方案
-
-                if( S.UA.ie <= 8){
-                    //暂时性解决跨域问题，后续将通过flash跨域配置来解决
-                    var frameEl =  "http://gtms01.alicdn.com/tps/i1/T14GxoXy8jXXaMrwve-700-430.png";
-                    var itemEl1 = "http://gtms01.alicdn.com/tps/i1/T1oVxmXqVhXXb4HOvo-600-375.jpg";
-                    var itemEl2 = "http://gtms01.alicdn.com/tps/i1/T1WuhmXD8hXXaeHbsb-100-100.png";
-                    var proxyServer = "http://www.tmall.com/go/rgn/tbs-proxy.php?file=";  
-                }else{
-                    var frameEl = "./resource/frame.png"; 
-                    var itemEl1 = "./resource/dog.jpg";   
-                    var itemEl2 = "./resource/item2.png"; 
-                    var proxyServer = "";                  
-                }
+                var frameEl =  "http://gtms01.alicdn.com/tps/i1/T14GxoXy8jXXaMrwve-700-430.png";
+                var itemEl1 = "http://gtms01.alicdn.com/tps/i1/T1oVxmXqVhXXb4HOvo-600-375.jpg";
+                var itemEl2 = "http://gtms01.alicdn.com/tps/i1/T1WuhmXD8hXXaeHbsb-100-100.png";
+                var proxyServer = "http://www.tmall.com/go/rgn/tbs-proxy.php?file=";   //使用FlashCanvas时，将越过proxy，使用crossdomain.xml
                 
                 //初始化绘图板
                 //若不使用proxy，直接置proxyPrefix:""
+                //百事项目："http://pepsi.tmall.com/usrimg?src=" 
                 var drawingPad = new DrawingPad({
                     height      : 430,
                     width       : 700,
                     wrapper     : S.get(".canvasWrapper"),
-                    proxyPrefix : proxyServer // 百事项目："http://pepsi.tmall.com/usrimg?src=" 
+                    proxyPrefix : ""
                 });
 
                 //添加图层，添加顺序即是覆盖顺序
@@ -107,7 +103,7 @@
                     centerY  : 200,     //图片的中心y，可选，默认0
                     rotate   : 10,      //旋转角度,可选，默认0
                     scale    : 1,       //缩放比例，可选，默认0
-                    cusClass : "myClass" //自定义样式
+                    cusClass : "myClass" //自定义样式，可选
                 }); //.render();
 
                 //添加图层，添加顺序即是覆盖顺序
@@ -146,6 +142,14 @@
 
                 Node.one(".set_image").on("click",function(){
                     drawingPad.setLayerPara(itemLayer,"img",frameEl);
+                });
+
+                Node.one(".set_hide").on("click",function(){
+                    drawingPad.setLayerPara(frameLayer,"hide",true);
+                });
+
+                Node.one(".set_show").on("click",function(){
+                    drawingPad.setLayerPara(frameLayer,"hide",false);
                 });
 
                 //获取交互数据
