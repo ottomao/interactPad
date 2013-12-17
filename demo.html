@@ -49,6 +49,10 @@
                     <td class="action act-active"><a class="getSingleInter" href="#">获取单层交互数据</a></td>
                     <td class="action act-cancel"><a class="getAllInter" href="#">获取全部交互数据</a></td>
                 </tr>
+
+                <tr>
+                    <td class="action act-upload"><a class="getData" href="#">上传</a></td>
+                </tr>
             </table>
         </div>
         <div style="clear:both"> </div>
@@ -79,12 +83,18 @@
         KISSY.use("gallery/drawingPad/1.0/index,node",function(S,DrawingPad,Node,F){
         // KISSY.use("gallery/drawingPad/1.0/index,node",function(S,DrawingPad,Node){
             S.ready(function(){
-
+                
                 //准备素材，受canvas安全限制，输出合成图片时只能使用同域素材，否则无法输出
-                var frameEl =  "http://gtms01.alicdn.com/tps/i1/T14GxoXy8jXXaMrwve-700-430.png";
-                var itemEl1 = "http://gtms01.alicdn.com/tps/i1/T1oVxmXqVhXXb4HOvo-600-375.jpg";
-                var itemEl2 = "http://gtms01.alicdn.com/tps/i1/T1WuhmXD8hXXaeHbsb-100-100.png";
-                var proxyServer = "http://www.tmall.com/go/rgn/tbs-proxy.php?file=";   //使用FlashCanvas时，将越过proxy，使用crossdomain.xml
+                if(S.UA.ie <= 8){
+                    var frameEl =  "http://gtms01.alicdn.com/tps/i1/T14GxoXy8jXXaMrwve-700-430.png";
+                    var itemEl1 = "http://gtms01.alicdn.com/tps/i1/T1oVxmXqVhXXb4HOvo-600-375.jpg";
+                    var itemEl2 = "http://gtms01.alicdn.com/tps/i1/T1WuhmXD8hXXaeHbsb-100-100.png";
+                }else{
+                    var frameEl = "./resource/frame.png"; 
+                    var itemEl1 = "./resource/dog.jpg";   
+                    var itemEl2 = "./resource/item2.png"; 
+                }
+        
                 
                 //初始化绘图板
                 //若不使用proxy，直接置proxyPrefix:""
@@ -93,7 +103,9 @@
                     height      : 430,
                     width       : 700,
                     wrapper     : S.get(".canvasWrapper"),
-                    proxyPrefix : ""
+                    proxyPrefix : "",
+                    // uploadUrl   : "http://api.mallbrand.tmall.com/inter/postFrame.html"
+                    uploadUrl   : "http://api.mallbrand.tmall.com/service/imgUpload.do?iframe=true"
                 });
 
                 //添加图层，添加顺序即是覆盖顺序
@@ -161,6 +173,16 @@
                 Node.one(".getAllInter").on("click",function(){
                     var data = drawingPad.getLayerInfo();
                     console.log(data);
+                });
+
+                Node.one(".act-upload").on("click",function(){
+                    // drawingPad.upload(function(res){
+                    //     S.log(res)
+                    // });
+                    drawingPad.getMergedData(function(res){
+                        S.log("here");
+                        S.log(res);
+                    },-1);
                 });
 
                 //获取合并后的数据，并在新窗口中打开预览
