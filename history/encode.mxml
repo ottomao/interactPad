@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- http://blog.flexexamples.com/2007/12/07/using-the-imagesnapshot-class-to-capture-images-as-jpegs-or-pngs-in-flex-3/ -->
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml"
+        layout="vertical"
+        verticalAlign="middle"
+        backgroundColor="white">
+
+    <mx:Script>
+        <![CDATA[
+            import mx.graphics.ImageSnapshot;
+            import mx.graphics.codec.*;
+
+            private const jpgEnc:JPEGEncoder = new JPEGEncoder();
+            private const pngEnc:PNGEncoder = new PNGEncoder();
+
+            private function captureImg(imgEnc:IImageEncoder):void {
+                var ohSnap:ImageSnapshot;
+                ohSnap = ImageSnapshot.captureImage(img, 0, imgEnc);
+                textArea.text = ImageSnapshot.encodeImageAsBase64(ohSnap);
+            }
+
+
+            var myLoader:Loader = new Loader();
+            myLoader.contentLoaderInfo.addEventListener(ProgressEvent.PROGRESS, onProgressStatus);
+            myLoader.contentLoaderInfo.addEventListener(Event.COMPLETE, onLoaderReady);
+
+            var fileRequest:URLRequest = new URLRequest("myImage.jpg");
+            myLoader.load(fileRequest);
+
+            public function onProgressStatus(e:ProgressEvent) {   
+                  // this is where progress will be monitored     
+                  trace(e.bytesLoaded, e.bytesTotal); 
+            }
+
+            public function onLoaderReady(e:Event) {     
+                  // the image is now loaded, so let's add it to the display tree!     
+                  addChild(myLoader);
+            }
+
+        ]]>
+    </mx:Script>
+
+    <mx:ApplicationControlBar dock="true">
+        <mx:ToggleButtonBar id="toggleButtonBar"
+                itemClick="captureImg(event.item.data);">
+            <mx:dataProvider>
+                <mx:Array>
+                    <mx:Object label="Capture as JPEG" data="{jpgEnc}" />
+                    <mx:Object label="Capture as PNG" data="{pngEnc}" />
+                </mx:Array>
+            </mx:dataProvider>
+        </mx:ToggleButtonBar>
+    </mx:ApplicationControlBar>
+
+    <mx:Image id="img"
+            source="@Embed('dog.jpg')" />
+
+    <mx:TextArea id="textArea"
+            editable="false"
+            width="320"
+            height="160" />
+
+</mx:Application>

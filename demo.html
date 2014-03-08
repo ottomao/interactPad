@@ -18,18 +18,18 @@
             <h4>图层管理</h4>
             <table>
                 <tr>
-                    <td class="thumbImg"><img src="./resource/frame.png" /></td>
+                    <td class="thumbImg"><img src="http://gtms01.alicdn.com/tps/i1/T14GxoXy8jXXaMrwve-700-430.png" /></td>
                     <td class="action act-active"><a class="frameAct" href="#">激活鼠标拖动交互</a></td>
                     <td class="action all_cancel" rowspan="3"><a class="all_cancel" href="#">退出交互</a></td>
                 </tr>
 
                 <tr>
-                    <td class="thumbImg"><img src="./resource/dog.jpg" /></td>
+                    <td class="thumbImg"><img src="http://gtms01.alicdn.com/tps/i1/T1oVxmXqVhXXb4HOvo-600-375.jpg" /></td>
                     <td class="action act-active"><a class="item1Act" href="#">激活鼠标拖动交互</a></td>
                 </tr>
 
                 <tr>
-                    <td class="thumbImg"><img src="./resource/item2.png" /></td>
+                    <td class="thumbImg"><img src="http://gtms01.alicdn.com/tps/i1/T1WuhmXD8hXXaeHbsb-100-100.png" /></td>
                     <td class="action act-active"><a class="item2Act" href="#">激活鼠标拖动交互</a></td>
                 </tr>
 
@@ -50,9 +50,6 @@
                     <td class="action act-cancel"><a class="getAllInter" href="#">获取全部交互数据</a></td>
                 </tr>
 
-                <tr>
-                    <td class="action act-upload"><a class="getData" href="#">上传</a></td>
-                </tr>
             </table>
         </div>
         <div style="clear:both"> </div>
@@ -69,7 +66,7 @@
             S.config({
                 packages:[
                     {
-                        name:"gallery/drawingPad/1.0",
+                        name:"gallery/drawingPad/2.0",
                         path:"./",
                         charset:"utf-8",
                         ignorePackageNameInUri:true
@@ -80,20 +77,13 @@
 
 
         /*使用组件*/
-        KISSY.use("gallery/drawingPad/1.0/index,node",function(S,DrawingPad,Node,F){
-        // KISSY.use("gallery/drawingPad/1.0/index,node",function(S,DrawingPad,Node){
+        KISSY.use("gallery/drawingPad/2.0/index,node",function(S,DrawingPad,Node,F){
             S.ready(function(){
                 
-                //准备素材，受canvas安全限制，输出合成图片时只能使用同域素材，否则无法输出
-                if(S.UA.ie <= 8){
-                    var frameEl =  "http://gtms01.alicdn.com/tps/i1/T14GxoXy8jXXaMrwve-700-430.png";
-                    var itemEl1 = "http://gtms01.alicdn.com/tps/i1/T1oVxmXqVhXXb4HOvo-600-375.jpg";
-                    var itemEl2 = "http://gtms01.alicdn.com/tps/i1/T1WuhmXD8hXXaeHbsb-100-100.png";
-                }else{
-                    var frameEl = "./resource/frame.png"; 
-                    var itemEl1 = "./resource/dog.jpg";   
-                    var itemEl2 = "./resource/item2.png"; 
-                }
+                var frameEl =  "http://gtms01.alicdn.com/tps/i1/T14GxoXy8jXXaMrwve-700-430.png";
+                var itemEl1 = "http://gtms01.alicdn.com/tps/i1/T1oVxmXqVhXXb4HOvo-600-375.jpg";
+                // var itemEl1 = "http://gtms01.alicdn.com/tps/i1/T1WuhmXD8hXXaeHbsb-100-100.png";
+                var itemEl2 = "http://gtms01.alicdn.com/tps/i1/T1WuhmXD8hXXaeHbsb-100-100.png";
         
                 
                 //初始化绘图板
@@ -102,10 +92,10 @@
                 var drawingPad = new DrawingPad({
                     height      : 430,
                     width       : 700,
-                    wrapper     : S.get(".canvasWrapper"),
-                    proxyPrefix : "",
+                    wrapper     : S.get(".canvasWrapper")
+                    // proxyPrefix : "",
                     // uploadUrl   : "http://api.mallbrand.tmall.com/inter/postFrame.html"
-                    uploadUrl   : "http://api.mallbrand.tmall.com/service/imgUpload.do?iframe=true"
+                    // uploadUrl   : "http://api.mallbrand.tmall.com/service/imgUpload.do"
                 });
 
                 //添加图层，添加顺序即是覆盖顺序
@@ -115,18 +105,24 @@
                     centerY  : 200,     //图片的中心y，可选，默认0
                     rotate   : 10,      //旋转角度,可选，默认0
                     scale    : 1,       //缩放比例，可选，默认0
-                    cusClass : "myClass" //自定义样式，可选
-                }); //.render();
+                    cusClass : "myClass", //自定义样式，可选,
+                    hide     : false
+                });
 
                 //添加图层，添加顺序即是覆盖顺序
                 var frameLayer = drawingPad.addLayer({
                     img   : frameEl
-                }); //.render();
+                });
+
+                var itemLayer2;
 
                 //添加图层，添加顺序即是覆盖顺序
-                var itemLayer2 = drawingPad.addLayer({
-                    img : itemEl2
-                }); //.render();
+                setTimeout(function(){
+                    itemLayer2 = drawingPad.addLayer({
+                        img : itemEl2
+                    });
+
+                },2000);
 
                 Node.one(".item1Act").on("click",function(){
                     drawingPad.activeInteract(itemLayer);
@@ -161,6 +157,9 @@
                 });
 
                 Node.one(".set_show").on("click",function(){
+                    // drawingPad.setLayerPara(frameLayer,"centerX",500);
+                    // drawingPad.setLayerPara(frameLayer,"centerY",600);
+
                     drawingPad.setLayerPara(frameLayer,"hide",false);
                 });
 
@@ -173,16 +172,6 @@
                 Node.one(".getAllInter").on("click",function(){
                     var data = drawingPad.getLayerInfo();
                     console.log(data);
-                });
-
-                Node.one(".act-upload").on("click",function(){
-                    // drawingPad.upload(function(res){
-                    //     S.log(res)
-                    // });
-                    drawingPad.getMergedData(function(res){
-                        S.log("here");
-                        S.log(res);
-                    },-1);
                 });
 
                 //获取合并后的数据，并在新窗口中打开预览
@@ -198,10 +187,6 @@
                     // alert(data);
                 });
 
-                // forDebug
-                window.drawingPad = drawingPad;
-                window.itemLayer  = itemLayer;
-                window.frameLayer = frameLayer;
             });
 
         });

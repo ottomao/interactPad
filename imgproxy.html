@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<head>
+	<title>Img Proxy Test</title>
+	<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+	<script src="http://jquery.thewikies.com/swfobject/jquery.swfobject.1-1-1.min.js"></script>
+    <script src="imgproxy.js"></script>
+    
+    <script>
+	    $(function() {
+	    	// imgproxy.SWF = 'http://yourserver/imgproxy.swf';
+	    	
+			imgproxy.load('http://gtms01.alicdn.com/tps/i1/T1YK8sFyXdXXaFhVIs-640-610.png_320x320.jpg',
+				function(img) {
+					console.log(img);
+					$('img').attr('src', img);
+				},
+				function(msg) {
+					console.error(msg);
+				}
+			);
+
+		});
+	</script>
+</head>
+
+<body>
+
+	<img />
+</body>

@@ -1,5 +1,3 @@
-
-
 /**
  * @fileoverview 
  * @author 加里<xiaofeng.mxf@taobao.com>
@@ -9,7 +7,7 @@
 //TODO : flashCanvas下的鼠标手势
 //TODO : 扔了cordX这个属性
 // http://a.tbcdn.cn/s/kissy/gallery/drawingPad/1.0/
-KISSY.add(function (S, Node,Dom,Base,JSON) {
+KISSY.add(function (S, Node,Dom,Base,JSON,Imgproxy) {
     var CLASS_INTERACT  = "_drawingPad_interact";// var FLASHCANVAS_PKG = "gallery/drawingPad/1.0/flashCanvas";
 
     /**
@@ -27,12 +25,14 @@ KISSY.add(function (S, Node,Dom,Base,JSON) {
                     if(!v) return;
 
                     var _self = this,
-                        imgEl = document.createElement("img"),
-                        newSrc;
+                        imgEl = document.createElement("img");
 
                     _self.img = imgEl;
 
-                    Node(imgEl).on("load",function(){  //异步载入，更新宽高
+                    function loadImg(src){
+                        console.log(src);
+                        imgEl.src= src;
+
                         _self.imgWidth  = imgEl.width;
                         _self.imgHeight = imgEl.height;
 
@@ -45,12 +45,20 @@ KISSY.add(function (S, Node,Dom,Base,JSON) {
                         }else{
                              _self.render();
                         }
-                    });
-                    newSrc    = _self.fatherPad.get("proxyPrefix") &&  !_self.fatherPad.flashCanvasEnabled ?  //有了flashCanvas之后，不再需要proxy支持
-                                _self.fatherPad.get("proxyPrefix") + ( /http:\/\//.test(v) ? v : "http://" + v ) + "?_random=" + new Date().getTime():
-                                v;
-                    imgEl.src = newSrc;
-                    return newSrc;
+                    }
+
+                    if(_self.fatherPad.flashCanvasEnabled){
+                        loadImg(v);
+                    }else{
+                        Imgproxy.load(v,
+                            loadImg,
+                            function(msg) {
+                                S.log("[drawingPad] fail to load img: " + msg);
+                            }
+                        );    
+                    }
+
+                    return  v; 
                 },
                 getter: function(v) {
                     return v;
@@ -59,6 +67,7 @@ KISSY.add(function (S, Node,Dom,Base,JSON) {
             centerX:{
                 value:null,
                 setter: function(v) {
+                    this.cordX = v;
                     return v;
                 },
                 getter: function(v) {
@@ -68,6 +77,7 @@ KISSY.add(function (S, Node,Dom,Base,JSON) {
             centerY:{
                 value:null,
                 setter: function(v) {
+                    this.cordY = v;
                     return v;
                 },
                 getter: function(v) {
@@ -613,10 +623,12 @@ KISSY.add(function (S, Node,Dom,Base,JSON) {
                 }                
             },
             //delay in ms
-            getMergedData:function(callback,delay){
+            //TODO : 配置项合并
+            getMergedData:function(callback,delay,ifRemovePrefix){
                 //百事项目临时方案
                 if(delay == -1){
-                    this.upload.call(this,callback);    
+                    this.upload.call(this,callback); 
+                    return;
                 }
 
 
@@ -639,12 +651,19 @@ KISSY.add(function (S, Node,Dom,Base,JSON) {
                 try{
                     if(self.flashCanvasEnabled){
                         setTimeout(function(){ //flashCanvas的getDataURL是异步操作，很慢
-                            dataURL = captureEl.toDataURL("image/png");
+                            dataURL = captureEl.toDataURL("image/jpeg");
+                            if(ifRemovePrefix){
+                                dataURL = dataURL.replace(/^data:image\/png;base64,/,"").replace(/^data:image\/jpeg;base64,/,"")
+                            }
+
                             self._clearCapture();
                             callback(dataURL);
                         } , delay);
                     }else{
-                        dataURL = captureEl.toDataURL("image/png");
+                        dataURL = captureEl.toDataURL("image/jpeg");
+                        if(ifRemovePrefix){
+                            dataURL = dataURL.replace(/^data:image\/png;base64,/,"").replace(/^data:image\/jpeg;base64,/,"")
+                        }
                         self._clearCapture();
                         if(!callback){
                             return dataURL;
@@ -662,7 +681,7 @@ KISSY.add(function (S, Node,Dom,Base,JSON) {
                 var self=this;
                 var id = "J_uploadFrame_drawingPad";
                 self.getMergedData(function(data){
-                    var binaryData = data.replace(/^data:image\/png;base64,/,""),
+                    var binaryData = data.replace(/^data:image\/png;base64,/,"").replace(/^data:image\/jpeg;base64,/,""),
                         url        = self.get("uploadUrl"),
                         wrapper    = Node(self.get("wrapper"));
                     document.domain = "tmall.com";  //for iframe cross domain
@@ -671,12 +690,13 @@ KISSY.add(function (S, Node,Dom,Base,JSON) {
                         var iframeEl = Node('<iframe id="__id" name="__id" height="0" width="0" frameborder="0" scrolling="yes"></iframe>'.replace(/__id/g,id) );
                         Node.one("body").append(iframeEl);
 
-                        var formEl = Node('<form class="J_form___id" target="__id" method="post" action="__target"><input type="hidden" name="img" value="___value"></form>'.replace(/__id/g,id).replace(/___value/g,binaryData).replace(/__target/g,url) );
+                        var formEl = Node('<form class="J_form___id" target="__id" method="post" action="__target"><input type="hidden" name="img" value="___value" /><input name="encode" value="true" /><input name="iframe" value="true" /></form>'.replace(/__id/g,id).replace(/___value/g,binaryData).replace(/__target/g,url) );
                         wrapper.append(formEl);
                     }else{
                         var iframeEl = Node.one("#"+id);
                         var formEl   = Node.one(".J_form_"+id);
                     }
+                    
 
                     iframeEl.on("load",function(){
                         var iFrameBody;
@@ -732,6 +752,8 @@ KISSY.add(function (S, Node,Dom,Base,JSON) {
                 layer.set(paraName,paraValue);
                 layer.render();
                 self._updateController();
+
+                return self;
             }
         },{}
     );
@@ -752,7 +774,6 @@ KISSY.add(function (S, Node,Dom,Base,JSON) {
         window.FlashCanvasOptions = {
             swfPath: "http://a.tbcdn.cn/s/kissy/gallery/drawingPad/1.0/",  //modify to CDN
             usePolicyFile:true,
-            // proxy:"http://www.tmall.com/go/rgn/tbs-proxy.php",
             disableContextMenu: true
         };
 
@@ -794,7 +815,7 @@ KISSY.add(function (S, Node,Dom,Base,JSON) {
 
     return DrawingPad;
 
-}, {requires:['node','dom', 'base','json']});
+}, {requires:['node','dom', 'base','json','gallery/imgProxy/1.0/index']});
 
 
 

@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>艾卿-图片合成工具</title>
+    <script src="http://g.tbcdn.cn/kissy/k/1.3.2/seed-min.js"></script>
+    <script src="http://a.tbcdn.cn/s/kissy/gallery/drawingPad/2.0/jszip.js"></script>
+
+</head>
+<body> 
+    <div class="J_container container">
+
+        <div class="col colA">
+            <h4>Step1. 输入图片地址</h4>
+            <textarea class="imgInput J_imgInput" rows="50" cols="60" placeholder="请输入图片地址，一行一个">
+http://img.taobaocdn.com/bao/uploaded/T1FnIaFaBeXXb1upjX.jpg
+http://img.taobaocdn.com/bao/uploaded/T1OtxdFtJcXXb1upjX.jpg
+http://img.taobaocdn.com/bao/uploaded/T1YRnxFjheXXb1upjX.jpg
+http://img.taobaocdn.com/bao/uploaded/T1.I.mFnJaXXb1upjX.jpg
+http://img.taobaocdn.com/bao/uploaded/T1NF2JFb8iXXb1upjX.jpg
+            </textarea>
+        </div>
+
+        <div class="col colB">
+            <h4>Step2 叠加icon</h4>
+            <textarea class="imgInput J_iconInput" rows="50" cols="10" placeholder="对应icon名称，一行一个">
+1.3
+1.4
+5.8
+1.3
+1.4
+            </textarea>
+        </div>  
+
+        <div class="col colB">
+            <h4>Step3 文件名</h4>
+            <textarea class="imgInput J_filenameInput" rows="50" cols="10" placeholder="对应文件名，一行一个">
+澳洲进口牛排套餐
+澳洲肩胛牛排
+挪威三文鱼
+智利帝王蟹
+智利三文鱼组合
+            </textarea>
+        </div>  
+
+        <div class="col colC">
+            <h4>icon预览</h4>
+            <div class="iconWrapper J_iconWrapper" defaultCenterLeft="50" defaultCenterTop="">
+
+                <cms:image group="配置" title="icon列表" fields="text,img" defaultRow="200" row="200" name="59ad417c-8678-44fa-9657-1201f1b6d260">
+                    #foreach($item in $imageList)
+                        <div class="J_singleIconWrapper iconItem"><img src="$!item.img" title="$!item.text" alt="$!item.text"/></div> 
+                    #end
+                </cms:image>  
+
+                <div class="clear"></div>
+            </div>
+
+            <h4>Step3 合成</h4>
+            <button id="J_merge">批量合成</button>
+            <button id="J_generate">生成文件</button>
+            <a id="J_download">下载文件</a>
+
+            <h4>参数</h4>
+            图片宽度：<input type="text" class="J_defaultWidth" value="250"/><br>
+            图片高度：<input type="text" class="J_defaultHeight" value="250"/><br>
+            Icon Left：<input type="text" class="J_defaultLeft" value="50"/><br>
+            Icon Top：<input type="text" class="J_defaultTop" value=""/><br>
+
+
+        </div>
+
+        <div style="clear:both">
+        <div class="J_mergeSection mergeSection"></div>
+
+    </div>
+
+    <style>
+        .J_mergeSection > div{
+            float: left;
+        }
+
+        .mergeSection{
+            width: 90%;
+        }
+
+        .canvasWrapper{
+            border: 1px dashed #F00;
+        }
+
+        .container{
+            width: 90%;
+            margin: auto;
+        }
+
+        .col{
+            float: left;
+        }
+
+        .colA{
+            width: 500px;
+        }
+
+        .colB{
+            width: 150px;
+        }
+
+        .colC{
+            width: 450px;
+        }
+
+        .iconItem{
+            float: left;
+            padding: 2px;
+            margin:4px;
+            border: 1px solid #FFF;
+        }
+
+        .iconItem:hover{
+            background: #DDD;
+            transition:0.4s;
+            border-color: #CCC;
+        }
+
+        .clear{
+            clear: both;
+        }
+    </style>
+
+    <script type="text/javascript">
+
+        /*调试模式，组件使用者无需使用*/
+        var S = KISSY;
+        S.Config.debug = true;
+        if (S.Config.debug) {
+            S.config({
+                packages:[
+                    {
+                        name:"gallery/drawingPad/2.0",
+                        path:"./",
+                        charset:"utf-8",
+                        ignorePackageNameInUri:true
+                    }
+                ]
+            });
+        }
+
+        /*使用组件*/
+        KISSY.use("gallery/drawingPad/2.0/index,node",function(S,DrawingPad,Node,F){
+            S.ready(function(){
+                var iconInput = Node.one(".J_iconInput"),
+                    imgInput      = Node.one(".J_imgInput"),
+                    filenameInput = Node.one(".J_filenameInput"),
+                    mergeBtn      = Node.one("#J_merge"),
+                    downloadBtn   = Node.one("#J_generate"),
+                    iconWrapper   = Node.one(".J_iconWrapper"),
+                    height        = parseInt(Node.one(".J_defaultWidth").val()),
+                    width         = parseInt(Node.one(".J_defaultHeight").val()),
+                    defaultIconL  = parseInt(Node.one(".J_defaultLeft").val()),
+                    defaultIconT  = parseInt(Node.one(".J_defaultTop").val()) || "",
+                    tmpImg        = "http://img.taobaocdn.com/bao/uploaded/T184bIFkhaXXb1upjX.jpg_250x250.jpg",
+                    tmpIcon       = "http://gtms01.alicdn.com/tps/i1/T1rbdwFzJXXXa11v_m-71-71.png",
+                    mergeSection  = Node.one(".J_mergeSection"),
+                    mergeMapArr   = [];
+
+
+                mergeBtn.on("click",function(e){
+                    var imgArr      = imgInput.val().split(/\s*\n\s*/),
+                        iconArr     = iconInput.val().split(/\s*\n\s*/),
+                        filenameArr = filenameInput.val().split(/\s*\n\s*/),
+                        iconMap     = {};
+
+                    if(imgArr.length != iconArr.length || imgArr.length != filenameArr.length || imgArr.length == 0){
+                        alert("列表长度出错");
+                        return;
+                    }
+
+                    //获取icon
+                    Node.all(".J_singleIconWrapper").each(function(v,k){
+                        var img = v.one("img").attr("src"),
+                            name= v.one("img").attr("alt");
+                            iconMap[name] = img;
+                    });
+
+                    //整合图片，icon，文字
+                    S.each(imgArr,function(v,k){
+                        if(filenameArr[k]){
+                            mergeMapArr.push({
+                                icon: S.trim(iconMap[iconArr[k]]) || tmpIcon,
+                                img:S.trim(v),
+                                filename:S.trim(filenameArr[k])
+                            });    
+                        }
+                    });
+
+                    //合成
+                    mergeSection.empty();
+                    S.each(mergeMapArr,function(v,k){
+                        var newWrapper   = Node('<div class="J_canvasWrapper___id"></div>'.replace(/__id/,k));
+                        mergeSection.append(newWrapper);
+
+                        var drawingPad = new DrawingPad({
+                            height      : height,
+                            width       : width,
+                            wrapper     : newWrapper.getDOMNode()
+                        }); 
+
+                        var bgLayer = drawingPad.addLayer({
+                            img      : tmpImg
+                        });
+
+                        var iconLayer = drawingPad.addLayer({
+                            img      : tmpIcon,
+                            centerX  : defaultIconL,
+                            centerY  : defaultIconT
+                        });
+
+                        drawingPad.setLayerPara(bgLayer,"img",v.img);
+                        drawingPad.setLayerPara(iconLayer,"img",v.icon);
+                        
+                        mergeMapArr[k].drawingPad = drawingPad;
+                    });
+
+                });
+
+                downloadBtn.on("click",function(e){
+
+                    var zip = new JSZip(),
+                        downloadA = S.get("#J_download");
+
+                    S.each(mergeMapArr,function(v,k){
+                        v.imageData = v.drawingPad.getMergedData(null,null,true);
+                        zip.file(v.filename+".jpg", v.imageData, {base64: true});
+                    });
+
+                    var blob = zip.generate({type:"blob"});
+                    downloadA.href = window.URL.createObjectURL(blob);
+                    downloadA.download = "image.zip";
+                });
+
+
+            });
+
+        });
+
+    </script>
+
